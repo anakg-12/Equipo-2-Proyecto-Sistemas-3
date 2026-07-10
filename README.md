@@ -19,7 +19,7 @@ Docker Desktop (con Docker)
 Clonar repositorio:
 * **git clone:** 
 ```bash
-https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30266566-31089011-31099867.git
+https://github.com/anakg-12/Equipo-2-Proyecto-Sistemas-3.git
 ```
 * **Variables de entorno:** Crea un archivo .env en la raíz del proyecto siguiendo el ejemplo de .env.example
 
