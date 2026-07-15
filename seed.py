@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from app.bd.database import AsyncSessionLocal
 from app.models import (
     RolModel, UsuarioModel, CategoriaMaquinaModel, MaquinaModel,
@@ -379,16 +379,24 @@ async def seed():
         sesiones_data = [
             {"disciplina": "Crossfit", 
              "entrenador_username": "carlos", 
-             "fecha_hora_inicio": datetime(2026,5,20,10,0), 
-             "fecha_hora_fin": datetime(2026,5,20,11,0), 
+             "fecha_hora_inicio": datetime.combine(
+                 date.today() + timedelta(days=3), time(hour=10), tzinfo=None
+             ),
+             "fecha_hora_fin": datetime.combine(
+                 date.today() + timedelta(days=3), time(hour=11), tzinfo=None
+             ),
              "cupo_maximo": 15, 
              "ubicacion": "Sala 1",
              "nombre": "Clase General"},
 
             {"disciplina": "Pilates", 
              "entrenador_username": "laura", 
-             "fecha_hora_inicio": datetime(2026,5,20,9,0), 
-             "fecha_hora_fin": datetime(2026,5,20,10,0), 
+             "fecha_hora_inicio": datetime.combine(
+                 date.today() + timedelta(days=3), time(hour=9), tzinfo=None
+             ), 
+             "fecha_hora_fin": datetime.combine(
+                 date.today() + timedelta(days=3), time(hour=10), tzinfo=None
+             ), 
              "cupo_maximo": 12, 
              "ubicacion": "Sala 2",
              "nombre": "Clase General"}
