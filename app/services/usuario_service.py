@@ -21,6 +21,9 @@ class UsuarioService:
             return None
         if not verify_password(password, user.password_hash):
             return None
+        # Verificamos que el usuario esté activo
+        if not user.activo:
+            raise AppException(detail="Usuario inactivo", error_code="USER_INACTIVE", status_code=403)
         return user
     #creamos la funcion de crear usuario
     async def create_usuario(self, schema: usuarioEntrada) -> UsuarioModel:
