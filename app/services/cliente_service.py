@@ -8,6 +8,7 @@ from app.core.errores import NotFoundException, AppException
 from typing import Optional
 from fastapi import Depends
 from app.dependencies import get_current_user
+from app.models.rol_model import RolesEnum
 
 class ClienteService:
     def __init__(self, db: AsyncSession):
@@ -17,11 +18,11 @@ class ClienteService:
     # Funcion para crear un cliente nuevo
     async def create_cliente(self, schema: clienteInicial) -> ClienteModel:
         # verificamos que exista el id del usuario
-        usuario = await self.usuario_repo.get_by_id(schema.usuario_id, id_column="usuario_id")
+        usuario = await self.usuario_repo.get_by_id_with_rol(schema.usuario_id)
         if not usuario:
             raise NotFoundException(detail="Id de Usuario no encontrado", error_code="ID_NOT_FOUND")
-        # verificamos que el usuario sea un cliente por la id
-        if usuario.rol_id != 4:  
+        # verificamos que el usuario sea un cliente por el nombre del rol
+        if not usuario.rol or usuario.rol.nombre != RolesEnum.CLIENTES:
             raise AppException(detail="El usuario no tiene el rol de cliente", error_code="USER_NOT_CLIENT_ROLE", status_code=400)
         cliente_info = schema.model_dump()
         cliente_info["activo"] = False  # El cliente se crea como inactivo por defecto
