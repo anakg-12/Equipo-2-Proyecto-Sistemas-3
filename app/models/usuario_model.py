@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.bd.database import Base
 
+
 class UsuarioModel(Base):
     __tablename__ = "usuario"
 
@@ -13,9 +14,13 @@ class UsuarioModel(Base):
     nombre = Column(String(50), nullable=False)
     apellido = Column(String(50), nullable=False)
     cedula = Column(String(20), unique=True, nullable=False)
-    rol_id = Column(Integer, ForeignKey("rol.rol_id", ondelete="RESTRICT"), nullable=False)
+    rol_id = Column(
+        Integer, ForeignKey("rol.rol_id", ondelete="RESTRICT"), nullable=False
+    )
     activo = Column(Boolean, default=True)
 
     rol = relationship("RolModel", back_populates="usuarios")
     cliente = relationship("ClienteModel", back_populates="usuario", uselist=False)
-    entrenador = relationship("EntrenadorModel", back_populates="usuario", uselist=False)
+    entrenador = relationship(
+        "EntrenadorModel", back_populates="usuario", uselist=False
+    )
