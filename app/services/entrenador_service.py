@@ -4,6 +4,7 @@ from app.schemas.entrenador_schema import entrenadorActualizar, entrenadorInicia
 from app.models import EntrenadorModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errores import NotFoundException
+from app.models.rol_model import RolesEnum
 
 class entrenadorService:
     def __init__(self, db: AsyncSession):
@@ -16,7 +17,7 @@ class entrenadorService:
         if not usuario:
             raise NotFoundException(detail="Id de Usuario no encontrado", error_code="ID_NOT_FOUND")
         #verificamos que el usuario sea un entrenador por la id
-        if usuario.rol_id != 3:  
+        if not usuario.rol or usuario.rol.nombre != RolesEnum.ENTRENADORES:
             raise NotFoundException(detail="El usuario no tiene el rol de entrenador", error_code="USER_NOT_TRAINER_ROLE")
         entrenador_info = schema.model_dump()
         entrenador_info["activo"] = True
