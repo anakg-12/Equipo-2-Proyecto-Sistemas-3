@@ -151,6 +151,7 @@ async def seed():
                     direccion=c["direccion"],
                     fecha_nacimiento=c["fecha_nacimiento"],
                     telefono=c["telefono"],
+                    activo=c["estado"],
                 )
                 db.add(cliente_ext)
         await db.commit()
