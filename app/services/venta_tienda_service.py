@@ -82,3 +82,27 @@ class VentaTiendaService:
             raise NotFoundException(detail="Venta no encontrada", error_code="VENTA_NOT_FOUND")
         detalles = await self.detalle_repo.get_by_venta(venta_id)
         return venta, detalles
+
+    # Actualizar el estado de una venta :)
+    async def actualizar_estado(self, venta_id: int, nuevo_estado: str):
+        """Actualiza el estado de una venta. Si el nuevo estado es 'cancelada',
+        se reponen las cantidades al stock de cada producto del detalle."""
+        venta = await self.venta_repo.get_by_id(venta_id, id_column="venta_id")
+        if not venta:
+            raise NotFoundException(detail="Venta no encontrada", error_code="VENTA_NOT_FOUND")
+
+        estado_anterior = getattr(venta, "estado", None)
+        # Si ya está en el mismo estado, no hacemos nada
+        if estado_anterior == nuevo_estado:
+            return venta
+
+        # Si transiciona a cancelada, sumar stock por cada detalle
+        if nuevo_estado == "cancelada":
+            detalles = await self.detalle_repo.get_by_venta(venta_id)
+            for d in detalles:
+                # cada detalle tiene producto_id y cantidad
+                await self.producto_service.sumar_stock(d.producto_id, d.cantidad)
+
+        # Actualizamos el estado en la cabecera de la venta
+        actualizado = await self.venta_repo.update(venta_id, {"estado": nuevo_estado}, id_column="venta_id")
+        return actualizado
