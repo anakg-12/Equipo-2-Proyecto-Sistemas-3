@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.exceptions import setup_exception_handlers
 
-from app.dependencies import security
 from app.middlewares.logging_middleware import LoggingMiddleware
 
 from app.bd.database import async_engine, Base
