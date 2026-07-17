@@ -7,6 +7,7 @@ from typing import Optional
 from app.core.exceptions import AppException
 from app.core.errores import NotFoundException
 from app.core.security import hash_password
+from app.models.rol_model import RolesEnum
 
 # Creamos la clase de Servicio de usuario
 class UsuarioService:
@@ -48,7 +49,7 @@ class UsuarioService:
         del user_info["password_recibida"]
         user_info["password_hash"] = password_hash
 
-        if schema.rol_id == 4:  # rol Cliente
+        if rol.nombre == RolesEnum.CLIENTES:  # rol Cliente
             user_info["activo"] = False  # El cliente se crea como inactivo por defecto
             # Ademas, actualizar el usuario a inactivo
         nuevo_usuario = await self.usuario_repo.create(**user_info)
