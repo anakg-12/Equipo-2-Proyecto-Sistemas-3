@@ -37,7 +37,8 @@ CREATE DATABASE smartgym;
 ```
 * **Crear las tablas y cargar datos iniciales:**
 ```bash
-python init_and_seed.py
+python -c "from app.bd.database import async_engine, Base; import asyncio; asyncio.run(async_engine.begin().run_sync(Base.metadata.create_all))"
+python seed.py
 ```
 * **Ejecución de la Aplicación:** 
 ```bash
