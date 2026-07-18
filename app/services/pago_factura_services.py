@@ -5,7 +5,7 @@ from app.repositories import (
 )
 from app.schemas.pago_factura_schema import pagoFacturaEntrada
 from app.models import PagoFacturaModel
-from app.core.errores import NotFoundException, BusinessRuleException
+from app.core.errores import BusinessRuleException
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from app.services.cliente_service import ClienteService
@@ -21,20 +21,13 @@ class PagoFacturaService:
 
     async def create_pago_factura(self, schema: pagoFacturaEntrada) -> PagoFacturaModel:
         # verificamos que tenga un plan de suscripcion activo
-        membresia = await self.membresia_repo.get_by_id(
-            schema.membresia_id, id_column="membresia_id"
+        membresia = await self.membresia_repo.get_by_id_or_fail(
+            schema.membresia_id, id_column="membresia_id", entity_name="Membresia"
         )
-        if not membresia:
-            raise NotFoundException(
-                detail="Id de Membresía no encontrado", error_code="ID_NOT_FOUND"
-            )
         # ver el plan de suscripcion asociado a la membresia
-        plan = await self.plan_repo.get_by_id(membresia.plan_id, id_column="plan_id")
-        if not plan:
-            raise NotFoundException(
-                detail="Id de Plan de Suscripción no encontrado",
-                error_code="ID_NOT_FOUND",
-            )
+        plan = await self.plan_repo.get_by_id_or_fail(
+            membresia.plan_id, id_column="plan_id", entity_name="Plan de Suscripcion"
+        )
         # Vemos los costos
         costo_plan = plan.costo
         if schema.monto < costo_plan:
