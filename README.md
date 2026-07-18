@@ -24,6 +24,20 @@ git clone https://github.com/anakg-12/Equipo-2-Proyecto-Sistemas-3.git
 
 ### Sin Docker:
 
+* **Crear entorno virtual** 
+```bash 
+python -m venv .venv  
+```
+* **Activar entorno** 
+* * **Windows:** 
+```bash
+.venv\Scripts\activate 
+```
+* * **Mac/Linux:** 
+```bash 
+source .venv/bin/activate 
+```
+
 * **Instalación de dependencias:** 
 ```bash
 pip install -r requirements.txt
@@ -69,5 +83,9 @@ http://localhost:8000/docs
 ## Autores
 * **Daniela Sofia Marquez**
 * **Tomas David Soto** 
-* **Ana Karina Garcia** 
-
+* **Ana Karina Garcia**
+* **Nelson Hernández**
+* **Jeiker David Morales**
+* **Carlos Paradas**
+* **Yosger Toro**
+* **Ricardo González**
