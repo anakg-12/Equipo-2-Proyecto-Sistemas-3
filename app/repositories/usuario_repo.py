@@ -29,3 +29,8 @@ class UsuarioRepository(BaseRepository[UsuarioModel]):
         stmt = select(UsuarioModel).where(UsuarioModel.activo == True).offset(skip).limit(limit)
         result = await self.db.execute(stmt)
         return result.scalars().all()
+
+    async def get_by_id_with_rol(self, usuario_id: int):
+        stmt = select(UsuarioModel).options(selectinload(UsuarioModel.rol)).where(UsuarioModel.usuario_id == usuario_id)
+        result = await self.db.execute(stmt)
+        return result.scalar_one_or_none()
