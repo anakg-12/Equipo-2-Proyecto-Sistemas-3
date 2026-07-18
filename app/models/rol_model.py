@@ -1,6 +1,13 @@
 from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import relationship
 from app.bd.database import Base
+from enum import Enum
+
+class RolesEnum(str, Enum):
+    ADMINISTRACION = "Administracion"
+    FINANZAS = "Finanzas"
+    ENTRENADORES = "Entrenadores"
+    CLIENTES = "Clientes"
 
 class RolModel(Base):
     __tablename__ = "rol"
