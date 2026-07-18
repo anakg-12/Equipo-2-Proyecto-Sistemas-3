@@ -1,6 +1,7 @@
 from typing import Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.models import EntrenadorModel, UsuarioModel
 from app.repositories.base_repo import BaseRepository
 
@@ -18,6 +19,6 @@ class EntrenadorRepository(BaseRepository[EntrenadorModel]):
         result = await self.db.execute(stmt)
         return result.scalars().all()
     async def get_usuario_by_id(self, usuario_id: int):
-        stmt = select(UsuarioModel).where(UsuarioModel.usuario_id == usuario_id)
+        stmt = select(UsuarioModel).options(selectinload(UsuarioModel.rol)).where(UsuarioModel.usuario_id == usuario_id)
         result = await self.db.execute(stmt)
         return result.scalar_one_or_none()
