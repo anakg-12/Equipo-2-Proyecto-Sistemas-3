@@ -12,6 +12,7 @@ from app.schemas.sesion_programada_schema import (
     sesionProgramadaActualizar,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.errores import NotFoundException, BusinessRuleException
 from typing import Optional
 from app.constants import SESSION_PROGRAMADA, SESSION_CANCELADA
 
@@ -64,6 +65,10 @@ class SesionProgramadaService:
         # Limpiar la zona horaria para que asyncpg y PostgreSQL no se quejen
         schema.fecha_hora_inicio = schema.fecha_hora_inicio.replace(tzinfo=None)
         schema.fecha_hora_fin = schema.fecha_hora_fin.replace(tzinfo=None)
+        if schema.fecha_hora_fin <= schema.fecha_hora_inicio: 
+            raise BusinessRuleException(detail = "La hora de inicio debe ser anterior a la hora de finalización", 
+                                        error_code="HORARIO_INVALIDO"
+                                        ) 
         sesion_info = schema.model_dump()
         sesion_info["estado"] = SESSION_PROGRAMADA
         return await self.sesion_programada.create(**sesion_info)

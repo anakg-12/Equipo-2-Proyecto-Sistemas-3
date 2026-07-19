@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field, EmailStr
+from pydantic import BaseModel, ConfigDict, Field, EmailStr, field_validator # Field_validator para validar la contraseña :)
 from fastapi import Query
 from typing import Optional
 
@@ -27,6 +27,16 @@ class UsuarioFiltros:
 #Creamos una clase para la entrada de datos del usuario, que hereda de la clase inicial y agrega el campo de contraseña
 class usuarioEntrada(usuarioInicial):
     password_recibida: str = Field(..., min_length=3, max_length=255, description="Contraseña del usuario")
+
+    # Validador para la contraseña, que verifica que tenga al menos 8 caracteres y que incluya números y letras :)
+    @field_validator('password_recibida')
+    @classmethod
+    def validar_password(cls, value: str) -> str:
+        if len(value) < 8:
+            raise ValueError("La contraseña es muy débil. Debe tener al menos 8 caracteres e incluir números y letras")
+        if not any(char.isalpha() for char in value) or not any(char.isdigit() for char in value):
+            raise ValueError("La contraseña es muy débil. Debe tener al menos 8 caracteres e incluir números y letras")
+        return value
 
 #Creamos una clase para la salida de datos del usuario, que hereda de la clase inicial y agrega el campo de ID y activo
 class usuarioSalida(usuarioInicial):

@@ -73,3 +73,10 @@ class ProductoTiendaService:
             )
         nuevo_stock = producto.stock - cantidad
         await self.repo.update_stock(producto_id, nuevo_stock)
+
+    # Funcion para sumar stock :)
+    async def sumar_stock(self, producto_id: int, cantidad: int):
+        """Aumenta el stock de un producto. Usado para revertir ventas canceladas."""
+        producto = await self.obtener_producto(producto_id)
+        nuevo_stock = producto.stock + cantidad
+        await self.repo.update_stock(producto_id, nuevo_stock)
