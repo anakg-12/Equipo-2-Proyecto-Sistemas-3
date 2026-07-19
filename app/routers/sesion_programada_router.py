@@ -93,7 +93,8 @@ async def actualizar_estado_sesion(
     Incluye validación manual de estados permitidos.
     Accesible para Administración.
     """
-    estados_permitidos = ["programada", "completada", "cancelada"]
+    from app.constants import SESSION_STATES as estados_permitidos
+    # estados_permitidos = ["programada", "completada", "cancelada"]
 
     if schema.estado.value not in estados_permitidos:
         raise HTTPException(
