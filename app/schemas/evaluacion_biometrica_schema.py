@@ -6,7 +6,7 @@ from decimal import Decimal
 
 #Hacemos la clase de una evaluación biométrica inicial con todos los atributos necesarios
 class EvaluacionBiometricaInicial(BaseModel):
-    entrenador_id: int = Field(..., ge=1, description="ID del entrenador que realiza la evaluación")
+    entrenador_id: Optional[int] = Field(None, ge=1, description="ID del entrenador que realiza la evaluación")
     fecha: Optional[date] = Field(None, description="Fecha de la evaluación biométrica")
     peso: Optional[Decimal] = Field(None, max_digits=5, decimal_places=2, gt=30,  description="Peso del cliente", example=75.5)
     estatura: Optional[Decimal] = Field(None, max_digits=5, decimal_places=2, gt=0.5, description="Estatura del cliente", example=1.75)
@@ -15,7 +15,7 @@ class EvaluacionBiometricaInicial(BaseModel):
 
 #creamos una clase para la creación de una evaluación biométrica, que hereda de la clase inicial
 class EvaluacionBiometricaCrear(EvaluacionBiometricaInicial):
-    pass
+    entrenador_id: int = Field(..., ge=1, description="ID del entrenador que realiza la evaluación")
 
 #creamos una clase para la salida de una evaluación biométrica, que hereda de la clase inicial y agrega el campo de ID
 class EvaluacionBiometricaSalida(EvaluacionBiometricaInicial):
