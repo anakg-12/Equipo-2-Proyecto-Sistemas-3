@@ -7,6 +7,11 @@ from app.schemas.reserva_inscripcion_schema import (
 from app.models import ReservaInscripcionModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errores import NotFoundException, AppException, BusinessRuleException
+from app.constants import (
+    SESSION_PROGRAMADA,
+    RESERVATION_ACTIVA,
+    RESERVATION_CANCELADA,
+)
 
 
 class ReservaInscripcionService:
@@ -24,8 +29,8 @@ class ReservaInscripcionService:
             schema.sesion_id, id_column="sesion_id", entity_name="Sesion Programada"
         )
 
-        # validación de estado: se bloquea si la sesión no está "programada"
-        if sesion_existe.estado != "programada":
+        # validación de estado: se bloquea si la sesión no está programada
+        if sesion_existe.estado != SESSION_PROGRAMADA:
             raise BusinessRuleException(
                 detail=f"No se puede reservar cupo en esta sesión porque esta se encuentra '{sesion_existe.estado}'. Solo se admiten reservas en sesiones programadas. ",
                 error_code="ESTADO_SESION_INVALIDO",
@@ -37,7 +42,7 @@ class ReservaInscripcionService:
 
         if reserva_previa:
             # Si el registro existe y está activo, bloqueamos
-            if reserva_previa.estado == "activa":
+            if reserva_previa.estado == RESERVATION_ACTIVA:
                 raise BusinessRuleException(
                     detail="El cliente ya tiene una reserva activa para esta sesión",
                     error_code="RESERVA_EXISTENTE",
@@ -66,7 +71,7 @@ class ReservaInscripcionService:
         # Preparamos la data
         reserva_info = schema.model_dump()
         reserva_info["cliente_id"] = cliente_id
-        reserva_info["estado"] = "activa"
+        reserva_info["estado"] = RESERVATION_ACTIVA
 
         if (
             reserva_info.get("fecha_reserva")
@@ -76,8 +81,8 @@ class ReservaInscripcionService:
                 tzinfo=None
             )
 
-        if reserva_previa and reserva_previa.estado == "cancelada":
-            datos_actualizar = {"estado": "activa"}
+        if reserva_previa and reserva_previa.estado == RESERVATION_CANCELADA:
+            datos_actualizar = {"estado": RESERVATION_ACTIVA}
             if "fecha_reserva" in reserva_info:
                 datos_actualizar["fecha_reserva"] = reserva_info["fecha_reserva"]
             return await self.reserva_inscripcion_repo.update(
@@ -152,5 +157,5 @@ class ReservaInscripcionService:
             entity_name="Reserva de Inscripción",
         )
         return await self.reserva_inscripcion_repo.update(
-            reserva_id, {"estado": "cancelada"}, id_column="reserva_id"
+            reserva_id, {"estado": RESERVATION_CANCELADA}, id_column="reserva_id"
         )

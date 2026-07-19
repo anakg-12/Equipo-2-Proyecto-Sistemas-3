@@ -10,6 +10,12 @@ from app.schemas.ticket_mantenimiento_schema import (
 from typing import List, Optional, Tuple
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errores import NotFoundException, AppException
+from app.constants import (
+    TICKET_ABIERTO,
+    TICKET_CERRADO,
+    MACHINE_OPERATIVE_EN_MANTENIMIENTO,
+    MACHINE_OPERATIVE_ACTIVA,
+)
 
 
 class TicketMantenimientoService:
@@ -40,11 +46,11 @@ class TicketMantenimientoService:
         # creamos el ticket de mantenimiento y actualizamos el estado de la maquina a "en mantenimiento"
         ticket_info = schema.model_dump()
         ticket_info["maquina_id"] = maquina_id
-        ticket_info["estado"] = "abierto"
+        ticket_info["estado"] = TICKET_ABIERTO
         ticket_info["fecha_reporte"] = datetime.now()
         await self.maquina_repo.update(
             id=maquina_id,
-            data={"estado_operativo": "en mantenimiento"},
+            data={"estado_operativo": MACHINE_OPERATIVE_EN_MANTENIMIENTO},
             id_column="maquina_id",
         )
         return await self.ticket_repo.create(**ticket_info)
@@ -98,13 +104,13 @@ class TicketMantenimientoService:
         if maquina:
             await self.maquina_repo.update(
                 id=maquina.maquina_id,
-                data={"estado_operativo": "activa"},
+                data={"estado_operativo": MACHINE_OPERATIVE_ACTIVA},
                 id_column="maquina_id",
             )
         # corregimos la fecha de resolucion
         fecha_limpia = schema.fecha_resolucion.replace(tzinfo=None)
         ticket_info = {
-            "estado": "cerrado",
+            "estado": TICKET_CERRADO,
             "fecha_resolucion": fecha_limpia,
             "costo_reparacion": schema.costo_reparacion,
         }

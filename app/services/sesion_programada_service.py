@@ -13,6 +13,7 @@ from app.schemas.sesion_programada_schema import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
+from app.constants import SESSION_PROGRAMADA, SESSION_CANCELADA
 
 
 class SesionProgramadaService:
@@ -64,9 +65,7 @@ class SesionProgramadaService:
         schema.fecha_hora_inicio = schema.fecha_hora_inicio.replace(tzinfo=None)
         schema.fecha_hora_fin = schema.fecha_hora_fin.replace(tzinfo=None)
         sesion_info = schema.model_dump()
-        sesion_info["estado"] = (
-            "programada"  # al crearla se debe colocar para postgresql que esta programada la sesion
-        )
+        sesion_info["estado"] = SESSION_PROGRAMADA
         return await self.sesion_programada.create(**sesion_info)
 
     # funcion para cambiar el estado de una sesion programada
@@ -84,7 +83,7 @@ class SesionProgramadaService:
             id=sesion_id, data=actualizar_info, id_column="sesion_id"
         )
 
-        if nuevo_estado == "cancelada":
+        if nuevo_estado == SESSION_CANCELADA:
             await self.reserva_repo.cancelar_reservas_por_sesion(sesion_id)
 
         return sesion_actualizada
