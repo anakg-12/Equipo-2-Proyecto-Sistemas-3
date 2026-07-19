@@ -52,6 +52,9 @@ CREATE DATABASE smartgym;
 ```bash
 python init_and_seed.py
 ```
+
+> ⚠️ **Advertencia:** Al ejecutar el script de datos semilla se borrarán las tablas existentes en la base de datos junto con los datos que contengan (si existen previamente) y luego creará las tablas de forma automática con los datos iniciales. No ejecute el script de datos semilla si, luego de la creación inicial, ha registrado información que no desea perder.
+
 * **Ejecución de la Aplicación:** 
 ```bash
 uvicorn app.main:app --reload
