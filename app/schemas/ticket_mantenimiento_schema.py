@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 from fastapi import Query
 from decimal import Decimal
+from app.constants import TicketState
 
 #Hacemos la clase de un ticket de mantenimiento inicial con todos los atributos necesarios
 class ticketMantenimiento(BaseModel):
@@ -17,14 +18,14 @@ class ticketMantenimientoCrear(ticketMantenimiento):
 class ticketMantenimientoSalida(ticketMantenimiento):
     ticket_id: int
     maquina_id: int
-    estado: str = Field(..., description="Indica si el ticket está abierto, en proceso o cerrado")
+    estado: TicketState = Field(..., description="Indica si el ticket está abierto, en proceso o cerrado")
     fecha_resolucion: Optional[datetime] = Field(None, description="Fecha de resolución del ticket, si ya fue resuelto")
     costo_reparacion: Optional[Decimal] = Field(None, ge=0, description="Costo de la reparación, si ya fue resuelto", example=200.0)
     model_config = ConfigDict(from_attributes=True)
 
 #creamos una clase para cambiar el estado de un ticket de mantenimiento
 class ticketMantenimientoActualizar(BaseModel):
-    estado: str = Field(..., description="Indica si el ticket está abierto, en proceso o cerrado")
+    estado: TicketState = Field(..., description="Indica si el ticket está abierto, en proceso o cerrado")
 
 #creamos una clase para cambiar la fecha de resolución y el costo de reparación de un ticket de mantenimiento
 class ticketMantenimientoResolver(BaseModel):

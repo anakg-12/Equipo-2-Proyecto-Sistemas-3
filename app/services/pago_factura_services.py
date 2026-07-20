@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from app.services.cliente_service import ClienteService
 from app.schemas.cliente_schema import clienteActualizar
+from app.constants import MembershipState
 
 
 class PagoFacturaService:
@@ -38,7 +39,7 @@ class PagoFacturaService:
         # vemos la fecha
         hoy = datetime.now().date()
         if (
-            membresia.estado == "activa"
+            membresia.estado == MembershipState.activa.value
             and membresia.fecha_fin
             and membresia.fecha_fin > hoy
         ):
@@ -53,7 +54,7 @@ class PagoFacturaService:
         datos_actualizar = {
             "fecha_inicio": nueva_fecha_inicial,
             "fecha_fin": nueva_fecha_fin,
-            "estado": "activa",
+            "estado": MembershipState.activa.value,
         }
 
         await self.membresia_repo.update(

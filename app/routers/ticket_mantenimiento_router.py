@@ -44,7 +44,7 @@ async def actualizar_estado_ticket(
     from app.constants import TICKET_STATES as estados_permitidos
     # estados_permitidos = ["abierto", "en_proceso", "cerrado"]
     
-    if schema.estado not in estados_permitidos:
+    if schema.estado.value not in estados_permitidos:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Estado '{schema.estado}' no es válido. Opciones permitidas: {', '.join(estados_permitidos)}"

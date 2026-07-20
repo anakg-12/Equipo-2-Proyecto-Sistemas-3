@@ -2,12 +2,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from fastapi import Query
 from datetime import datetime, date
-from enum import Enum
-
-class estadosSesion(str, Enum):
-    programada = "programada"
-    completada = "completada"
-    cancelada = "cancelada"
+from app.constants import SessionState
 
 #Hacemos la clase de una sesión programada inicial con todos los atributos necesarios
 class sesionProgramadaInicial(BaseModel):
@@ -23,7 +18,7 @@ class sesionProgramadaInicial(BaseModel):
 class SesionProgramadaFiltros:
     def __init__(
         self,
-        estado: Optional[str] = Query(None, description="Filtrar por estado de la sesión programada (programada, completada, cancelada)"),
+        estado: Optional[SessionState] = Query(None, description="Filtrar por estado de la sesión programada (programada, completada, cancelada)"),
         fecha: Optional[date] = Query(None, description="Filtrar por fecha de la sesión programada"),
         disciplina_id: Optional[int] = Query(None, description="Filtrar por ID de la disciplina asociada a la sesión programada"),
         page: int = Query(1, ge=1, description="Número de página"),
@@ -42,9 +37,9 @@ class sesionProgramadaEntrada(sesionProgramadaInicial):
 #Creamos una clase para la salida de datos de la sesión programada, que hereda de la clase inicial y agrega el campo de ID y estado
 class sesionProgramadaSalida(sesionProgramadaInicial):
     sesion_id: int = Field(..., description="ID de la sesión programada")
-    estado: estadosSesion = Field(..., description="Indica si la sesion esta programada, completada o cancelada")
+    estado: SessionState = Field(..., description="Indica si la sesion esta programada, completada o cancelada")
     model_config = ConfigDict(from_attributes=True)
 
 #Creamos una clase para la actualización de datos de la sesión programada, que solo permite actualizar el campo de estado
 class sesionProgramadaActualizar(BaseModel):
-    estado: estadosSesion = Field(..., description="Indica si la sesion esta programada, completada o cancelada")
+    estado: SessionState = Field(..., description="Indica si la sesion esta programada, completada o cancelada")

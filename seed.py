@@ -18,6 +18,7 @@ from app.models import (
 )
 from app.core.security import hash_password
 from sqlalchemy import select
+from app.constants import MachineStatus, MembershipState, SessionState, ReservationState
 
 
 async def seed():
@@ -271,35 +272,35 @@ async def seed():
             {
                 "nombre": "Cinta de correr T-3000",
                 "descripcion_tecnica": "Motor",
-                "estado_operativo": "activa",
+                "estado_operativo": MachineStatus.activa.value,
                 "categoria_id": cat_ids["Cardiovascular"],
                 "fecha_compra": datetime(2024, 1, 15).date(),
             },
             {
                 "nombre": "Bicicleta T-800",
                 "descripcion_tecnica": "Volante",
-                "estado_operativo": "activa",
+                "estado_operativo": MachineStatus.activa.value,
                 "categoria_id": cat_ids["Cardiovascular"],
                 "fecha_compra": datetime(2024, 2, 10).date(),
             },
             {
                 "nombre": "Máquina de pecho",
                 "descripcion_tecnica": "Prensa de pecho sentado, ajustable",
-                "estado_operativo": "activa",
+                "estado_operativo": MachineStatus.activa.value,
                 "categoria_id": cat_ids["Musculación"],
                 "fecha_compra": datetime(2023, 12, 5).date(),
             },
             {
                 "nombre": "Jaula de sentadillas",
                 "descripcion_tecnica": "Jaula multifuncional con barra",
-                "estado_operativo": "activa",
+                "estado_operativo": MachineStatus.activa.value,
                 "categoria_id": cat_ids["Peso Libre"],
                 "fecha_compra": datetime(2024, 3, 20).date(),
             },
             {
                 "nombre": "Mancuernas",
                 "descripcion_tecnica": "Set de mancuernas con discos",
-                "estado_operativo": "activa",
+                "estado_operativo": MachineStatus.activa.value,
                 "categoria_id": cat_ids["Peso Libre"],
                 "fecha_compra": datetime(2024, 4, 1).date(),
             },
@@ -382,13 +383,13 @@ async def seed():
                 "cliente_username": "juan",
                 "plan_nombre": "Mensual Basico",
                 "fecha_inicio": date.today(),
-                "estado": "activa",
+                "estado": MembershipState.activa.value,
             },
             {
                 "cliente_username": "maria",
                 "plan_nombre": "Anual",
                 "fecha_inicio": date.today() - timedelta(days=10),
-                "estado": "inactiva",
+                "estado": MembershipState.inactiva.value,
             },
         ]
         for mem in membresias_data:
@@ -424,7 +425,7 @@ async def seed():
                     await db.flush()
 
                     # Evaluamos directamente el atributo real del diccionario
-                    if mem["estado"] == "activa":
+                    if mem["estado"] == MembershipState.activa.value:
                         pago = PagoFacturaModel(
                             membresia_id=nueva_membresia.membresia_id,
                             monto=plan.costo,
@@ -546,7 +547,7 @@ async def seed():
                     cupo_maximo=ses["cupo_maximo"],
                     ubicacion=ses["ubicacion"],
                     nombre=ses["nombre"],
-                    estado="programada",
+                    estado=SessionState.programada.value,
                 )
                 db.add(nueva_sesion)
         await db.commit()
@@ -571,7 +572,7 @@ async def seed():
                         reserva = ReservaInscripcionModel(
                             cliente_id=cliente_obj.cliente_id,
                             sesion_id=ses.sesion_id,
-                            estado="activa",
+                            estado=ReservationState.activa.value,
                         )
                         db.add(reserva)
         await db.commit()

@@ -5,6 +5,7 @@ from app.services.producto_tienda_service import ProductoTiendaService
 from app.schemas.venta_tienda_schema import VentaCompletaEntrada
 from app.models import VentaTiendaModel
 from app.core.errores import NotFoundException, BusinessRuleException
+from app.constants import SaleState
 
 
 class VentaTiendaService:
@@ -54,7 +55,7 @@ class VentaTiendaService:
 
         # 4. Crear cabecera y detalles
         venta = await self.venta_repo.create(
-            cliente_id=schema.cliente_id, total=total_calculado, estado="completada"
+            cliente_id=schema.cliente_id, total=total_calculado, estado=SaleState.completada.value
         )
 
         for item in schema.items:
@@ -105,7 +106,7 @@ class VentaTiendaService:
             return venta
 
         # Si transiciona a cancelada, sumar stock por cada detalle
-        if nuevo_estado == "cancelada":
+        if nuevo_estado == SaleState.cancelada.value:
             detalles = await self.detalle_repo.get_by_venta(venta_id)
             for d in detalles:
                 # cada detalle tiene producto_id y cantidad

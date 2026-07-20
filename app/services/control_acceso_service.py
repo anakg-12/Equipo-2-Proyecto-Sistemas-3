@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime
 from app.core.exceptions import AppException
 from app.core.errores import NotFoundException
+from app.constants import MembershipState
 
 
 class ControlAccesoService:
@@ -34,7 +35,7 @@ class ControlAccesoService:
 
         for membresia in cliente_existente.membresias:
             if (
-                membresia.estado in ["activa", "por vencer"]
+                membresia.estado in [MembershipState.activa.value, MembershipState.por_vencer.value]
                 and membresia.fecha_inicio <= hoy <= membresia.fecha_fin
             ):
                 membresia_valida = True

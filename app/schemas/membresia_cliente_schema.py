@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import date
 from typing import Optional
+from app.constants import MembershipState
 
 #Hacemos la clase de un cliente inicial con todos los atributos necesarios
 class membresiaClienteInicial(BaseModel):
@@ -14,7 +15,7 @@ class membresiaClienteCrear(membresiaClienteInicial):
 class membresiaClienteSalida(membresiaClienteInicial):
     fecha_fin: Optional[date] = Field(None, description="Fecha de fin de la membresía")
     membresia_id: Optional[int] = Field(None, description="ID de la membresía del cliente")
-    estado: str = Field(...,max_length=20, description="Indica el tipo de membresia que tiene el cliente")
+    estado: MembershipState = Field(..., description="Indica el tipo de membresia que tiene el cliente")
     model_config = ConfigDict(from_attributes=True)
 
 

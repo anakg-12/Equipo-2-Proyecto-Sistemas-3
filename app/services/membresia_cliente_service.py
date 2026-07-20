@@ -8,13 +8,7 @@ from datetime import datetime, timedelta
 from app.core.errores import AppException
 from app.models import MembresiaClienteModel
 from app.schemas.membresia_cliente_schema import membresiaClienteCrear
-from app.constants import (
-    MEMBERSHIP_INACTIVA,
-    MEMBERSHIP_NONE,
-    MEMBERSHIP_VENCIDA,
-    MEMBERSHIP_POR_VENCER,
-    MEMBERSHIP_ACTIVA,
-)
+from app.constants import MembershipState
 
 
 class MembresiaClienteService:
@@ -33,23 +27,23 @@ class MembresiaClienteService:
         if not cliente_existe.activo:
             return {
                 "cliente_id": cliente_id,
-                "estado": MEMBERSHIP_INACTIVA,
+                "estado": MembershipState.inactiva.value,
                 "mensaje": "El cliente no está activo en el sistema.",
             }
         # vemos si el cliente tiene una membresia activa
         membresia_existe = await self.membresia_repo.get_ultima_membresia(cliente_id)
         if not membresia_existe:
-            return {"cliente_id": cliente_id, "estado": MEMBERSHIP_NONE}
+            return {"cliente_id": cliente_id, "estado": MembershipState.ninguna.value}
 
         dia_hoy = datetime.now().date()
         fecha_final = membresia_existe.fecha_fin
         dias_que_quedan = (fecha_final - dia_hoy).days
         if dias_que_quedan <= 0:
-            estado = MEMBERSHIP_VENCIDA
+            estado = MembershipState.vencida.value
         elif 3 >= dias_que_quedan > 0:
-            estado = MEMBERSHIP_POR_VENCER
+            estado = MembershipState.por_vencer.value
         else:
-            estado = MEMBERSHIP_ACTIVA
+            estado = MembershipState.activa.value
         return {
             "cliente_id": cliente_id,
             "estado": estado,
@@ -94,5 +88,5 @@ class MembresiaClienteService:
         membresia_info = schema.model_dump()
         membresia_info["fecha_inicio"] = fecha_inicio
         membresia_info["fecha_fin"] = fecha_fin
-        membresia_info["estado"] = MEMBERSHIP_INACTIVA  # La membresía se crea como inactiva por defecto, se activará al realizar el pago
+        membresia_info["estado"] = MembershipState.inactiva.value  # La membresía se crea como inactiva por defecto, se activará al realizar el pago
         return await self.membresia_repo.create(**membresia_info)

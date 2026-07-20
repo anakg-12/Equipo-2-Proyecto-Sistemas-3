@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from fastapi import Query
 from typing import Optional
 from datetime import date
+from app.constants import MachineStatus
 
 
 #Hacemos la clase de una maquina inicial con todos los atributos necesarios
@@ -33,9 +34,9 @@ class MaquinaFiltros:
 
 class maquinaSalida(maquinaInicial):
     maquina_id: int = Field(..., description="ID de la máquina")
-    estado_operativo: str = Field(..., description="Indica si la máquina está activa, fuera de servicio o en mantenimiento")
+    estado_operativo: MachineStatus = Field(..., description="Indica si la máquina está activa, fuera de servicio o en mantenimiento")
     model_config = ConfigDict(from_attributes=True)
 
 #Creamos una clase para la actualización de datos de la máquina, que solo permite actualizar el estado de la maquina
 class maquinaActualizar(BaseModel):
-    estado_operativo: str = Field(..., description="Indica si la máquina está activa, fuera de servicio o en mantenimiento")
+    estado_operativo: MachineStatus = Field(..., description="Indica si la máquina está activa, fuera de servicio o en mantenimiento")

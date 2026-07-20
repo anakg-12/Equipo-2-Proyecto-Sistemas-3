@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.bd.database import Base
+from app.constants import SaleState
 
 class VentaTiendaModel(Base):
     __tablename__ = "venta_tienda"
@@ -10,7 +11,7 @@ class VentaTiendaModel(Base):
     cliente_id = Column(Integer, ForeignKey("cliente.cliente_id"), nullable=False)
     fecha_venta = Column(DateTime, server_default=func.now())
     total = Column(Numeric(10,2), nullable=False)
-    estado = Column(String(20), nullable=False, default="completada")
+    estado = Column(String(20), nullable=False, default=SaleState.completada.value)
 
     cliente = relationship("ClienteModel", back_populates="ventas")
     detalles = relationship("VentaDetalleModel", back_populates="venta", cascade="all, delete-orphan")

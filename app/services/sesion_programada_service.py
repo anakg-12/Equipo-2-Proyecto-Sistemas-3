@@ -14,7 +14,7 @@ from app.schemas.sesion_programada_schema import (
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errores import NotFoundException, BusinessRuleException
 from typing import Optional
-from app.constants import SESSION_PROGRAMADA, SESSION_CANCELADA
+from app.constants import SessionState
 
 
 class SesionProgramadaService:
@@ -70,7 +70,7 @@ class SesionProgramadaService:
                                         error_code="HORARIO_INVALIDO"
                                         ) 
         sesion_info = schema.model_dump()
-        sesion_info["estado"] = SESSION_PROGRAMADA
+        sesion_info["estado"] = SessionState.programada.value
         return await self.sesion_programada.create(**sesion_info)
 
     # funcion para cambiar el estado de una sesion programada
@@ -88,7 +88,7 @@ class SesionProgramadaService:
             id=sesion_id, data=actualizar_info, id_column="sesion_id"
         )
 
-        if nuevo_estado == SESSION_CANCELADA:
+        if nuevo_estado == SessionState.cancelada.value:
             await self.reserva_repo.cancelar_reservas_por_sesion(sesion_id)
 
         return sesion_actualizada
