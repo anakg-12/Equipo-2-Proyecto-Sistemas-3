@@ -4,12 +4,13 @@ from typing import Optional
 from datetime import datetime
 from decimal import Decimal
 from app.schemas.venta_detalle_schema import VentaDetalleInicial, VentaDetalleSalida
+from app.constants import SaleState
 
 class VentaTiendaInicial(BaseModel):
     cliente_id: int = Field(..., ge=1, description="ID del cliente que realiza la compra")
     # fecha_venta se asigna automáticamente
     # total se calcula
-    estado: str = Field("completada", pattern="^(completada|cancelada)$", description="Estado de la venta")
+    estado: SaleState = Field(SaleState.completada, description="Estado de la venta")
 
 class VentaTiendaSalida(VentaTiendaInicial):
     venta_id: int = Field(..., description="ID de la venta")
@@ -18,7 +19,7 @@ class VentaTiendaSalida(VentaTiendaInicial):
     model_config = ConfigDict(from_attributes=True)
 
 class VentaTiendaActualizar(BaseModel):
-    estado: str = Field(..., pattern="^(completada|cancelada)$", description="Nuevo estado de la venta")
+    estado: SaleState = Field(..., description="Nuevo estado de la venta")
 
 class VentaTiendaFiltros:
     def __init__(

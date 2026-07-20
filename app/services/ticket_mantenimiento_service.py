@@ -10,12 +10,7 @@ from app.schemas.ticket_mantenimiento_schema import (
 from typing import List, Optional, Tuple
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errores import NotFoundException, AppException
-from app.constants import (
-    TICKET_ABIERTO,
-    TICKET_CERRADO,
-    MACHINE_OPERATIVE_EN_MANTENIMIENTO,
-    MACHINE_OPERATIVE_ACTIVA,
-)
+from app.constants import TicketState, MachineStatus
 
 
 class TicketMantenimientoService:
@@ -46,11 +41,11 @@ class TicketMantenimientoService:
         # creamos el ticket de mantenimiento y actualizamos el estado de la maquina a "en mantenimiento"
         ticket_info = schema.model_dump()
         ticket_info["maquina_id"] = maquina_id
-        ticket_info["estado"] = TICKET_ABIERTO
+        ticket_info["estado"] = TicketState.abierto.value
         ticket_info["fecha_reporte"] = datetime.now()
         await self.maquina_repo.update(
             id=maquina_id,
-            data={"estado_operativo": MACHINE_OPERATIVE_EN_MANTENIMIENTO},
+            data={"estado_operativo": MachineStatus.en_mantenimiento.value},
             id_column="maquina_id",
         )
         return await self.ticket_repo.create(**ticket_info)
@@ -84,7 +79,7 @@ class TicketMantenimientoService:
             ticket_id, id_column="ticket_id", entity_name="Ticket de Mantenimiento"
         )
         # actualizamos el ticket de mantenimiento
-        ticket_existente.estado = schema.estado
+        ticket_existente.estado = schema.estado.value
         return await self.ticket_repo.update(
             id=ticket_id,
             data={"estado": ticket_existente.estado},
@@ -104,13 +99,13 @@ class TicketMantenimientoService:
         if maquina:
             await self.maquina_repo.update(
                 id=maquina.maquina_id,
-                data={"estado_operativo": MACHINE_OPERATIVE_ACTIVA},
+                data={"estado_operativo": MachineStatus.activa.value},
                 id_column="maquina_id",
             )
         # corregimos la fecha de resolucion
         fecha_limpia = schema.fecha_resolucion.replace(tzinfo=None)
         ticket_info = {
-            "estado": TICKET_CERRADO,
+            "estado": TicketState.cerrado.value,
             "fecha_resolucion": fecha_limpia,
             "costo_reparacion": schema.costo_reparacion,
         }

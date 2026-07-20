@@ -16,6 +16,7 @@ from app.schemas.venta_tienda_schema import (
 
 # Importación del servicio de ventas
 from app.services.venta_tienda_service import VentaTiendaService
+from app.constants import SaleState
 
 # Definimos el prefijo /api/v1/ventas
 router = APIRouter(
@@ -105,7 +106,7 @@ async def cancelar_venta(
     Cancela una venta (cambio de estado a 'cancelada') y repone el stock de los productos involucrados.
     Accesible para roles de Administración y Finanzas.
     """
-    venta_actualizada = await service.actualizar_estado(venta_id, "cancelada")
+    venta_actualizada = await service.actualizar_estado(venta_id, SaleState.cancelada.value)
     return {
         "status": "success",
         "message": "Venta cancelada correctamente",

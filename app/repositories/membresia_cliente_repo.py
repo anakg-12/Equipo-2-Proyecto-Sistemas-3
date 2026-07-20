@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from app.models import MembresiaClienteModel
 from app.repositories.base_repo import BaseRepository
+from app.constants import MembershipState
 
 class MembresiaClienteRepository(BaseRepository[MembresiaClienteModel]):
     def __init__(self, db: AsyncSession):
@@ -25,7 +26,7 @@ class MembresiaClienteRepository(BaseRepository[MembresiaClienteModel]):
             and_(
                 MembresiaClienteModel.cliente_id == cliente_id,
                 MembresiaClienteModel.fecha_fin >= hoy,
-                MembresiaClienteModel.estado == "activa"
+                MembresiaClienteModel.estado == MembershipState.activa.value
             )
         ).order_by(MembresiaClienteModel.fecha_fin.desc()).limit(1)
         result = await self.db.execute(stmt)

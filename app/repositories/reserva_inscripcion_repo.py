@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 from app.models import ReservaInscripcionModel, SesionProgramadaModel
 from app.repositories.base_repo import BaseRepository
 from datetime import datetime
+from app.constants import ReservationState
 
 class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
     def __init__(self, db: AsyncSession):
@@ -13,7 +14,7 @@ class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
     async def get_activas_by_cliente(self, cliente_id: int) -> List[ReservaInscripcionModel]:
         stmt = select(ReservaInscripcionModel).where(
             ReservaInscripcionModel.cliente_id == cliente_id,
-            ReservaInscripcionModel.estado == "activa"
+            ReservaInscripcionModel.estado == ReservationState.activa.value
         ).options(selectinload(ReservaInscripcionModel.sesion))
         result = await self.db.execute(stmt)
         return result.scalars().all()
@@ -21,7 +22,7 @@ class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
     async def count_activas_by_sesion(self, sesion_id: int) -> int:
         stmt = select(func.count()).select_from(ReservaInscripcionModel).where(
             ReservaInscripcionModel.sesion_id == sesion_id,
-            ReservaInscripcionModel.estado == "activa"
+            ReservaInscripcionModel.estado == ReservationState.activa.value
         )
         result = await self.db.execute(stmt)
         return result.scalar_one()
@@ -30,7 +31,7 @@ class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
         stmt = select(func.count()).select_from(ReservaInscripcionModel).where(
             ReservaInscripcionModel.cliente_id == cliente_id,
             ReservaInscripcionModel.sesion_id == sesion_id,
-            ReservaInscripcionModel.estado == "activa"
+            ReservaInscripcionModel.estado == ReservationState.activa.value
         )
         result = await self.db.execute(stmt)
         return result.scalar_one() > 0
@@ -39,7 +40,7 @@ class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
             SesionProgramadaModel
         ).where(
             ReservaInscripcionModel.cliente_id == cliente_id,
-            ReservaInscripcionModel.estado == "activa",
+            ReservaInscripcionModel.estado == ReservationState.activa.value,
             SesionProgramadaModel.fecha_hora_inicio < fecha_fin,
             SesionProgramadaModel.fecha_hora_fin > fecha_inicio
             )
@@ -49,7 +50,7 @@ class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
     async def get_inscritos_por_sesion(self, sesion_id: int) -> List[ReservaInscripcionModel]:
         stmt = select(ReservaInscripcionModel).where(
             ReservaInscripcionModel.sesion_id == sesion_id,
-            ReservaInscripcionModel.estado == "activa"
+            ReservaInscripcionModel.estado == ReservationState.activa.value
         )
         result = await self.db.execute(stmt)
         return result.scalars().all()
@@ -70,9 +71,9 @@ class ReservaInscripcionRepository(BaseRepository[ReservaInscripcionModel]):
             update(ReservaInscripcionModel)
             .where(
                 ReservaInscripcionModel.sesion_id == sesion_id,
-                ReservaInscripcionModel.estado == "activa"
+                ReservaInscripcionModel.estado == ReservationState.activa.value
             )
-            .values(estado="cancelada")
+            .values(estado=ReservationState.cancelada.value)
         )
         await self.db.execute(stmt)
         await self.db.commit()

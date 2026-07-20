@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 from app.models import TicketMantenimientoModel, UsuarioModel
 from app.models.rol_model import RolesEnum
 from app.repositories.base_repo import BaseRepository
+from app.constants import TicketState
 
 class TicketMantenimientoRepository(BaseRepository[TicketMantenimientoModel]):
     def __init__(self, db: AsyncSession):
@@ -16,7 +17,7 @@ class TicketMantenimientoRepository(BaseRepository[TicketMantenimientoModel]):
         return result.scalars().all()
 
     async def get_abiertos(self) -> List[TicketMantenimientoModel]:
-        stmt = select(TicketMantenimientoModel).where(TicketMantenimientoModel.estado == "abierto")
+        stmt = select(TicketMantenimientoModel).where(TicketMantenimientoModel.estado == TicketState.abierto.value)
         result = await self.db.execute(stmt)
         return result.scalars().all()
     async def verificar_usuario_admin(self, usuario_id: int) -> bool:
@@ -30,7 +31,7 @@ class TicketMantenimientoRepository(BaseRepository[TicketMantenimientoModel]):
     async def exist_ticket_abierto(self, maquina_id: int) -> bool:
         stmt = select(TicketMantenimientoModel).where(
             TicketMantenimientoModel.maquina_id == maquina_id,
-            TicketMantenimientoModel.estado == "abierto"
+            TicketMantenimientoModel.estado == TicketState.abierto.value
         )
         result = await self.db.execute(stmt)
         ticket = result.scalar_one_or_none()
