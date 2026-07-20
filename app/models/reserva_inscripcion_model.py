@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.bd.database import Base
+from app.constants import ReservationState
 
 class ReservaInscripcionModel(Base):
     __tablename__ = "reserva_inscripcion"
@@ -10,7 +11,7 @@ class ReservaInscripcionModel(Base):
     cliente_id = Column(Integer, ForeignKey("cliente.cliente_id"), nullable=False)
     sesion_id = Column(Integer, ForeignKey("sesion_programada.sesion_id"), nullable=False)
     fecha_reserva = Column(DateTime, server_default=func.now())
-    estado = Column(String(20), nullable=False, default="activa")
+    estado = Column(String(20), nullable=False, default=ReservationState.activa.value)
 
     cliente = relationship("ClienteModel", back_populates="reservas")
     sesion = relationship("SesionProgramadaModel", back_populates="reservas")

@@ -8,7 +8,7 @@ class EvaluacionBiometricaModel(Base):
 
     evaluacion_id = Column(Integer, primary_key=True)
     cliente_id = Column(Integer, ForeignKey("cliente.cliente_id", ondelete="CASCADE"), nullable=False)
-    entrenador_id = Column(Integer, ForeignKey("entrenador.entrenador_id", ondelete="SET NULL"), nullable=False)
+    entrenador_id = Column(Integer, ForeignKey("entrenador.entrenador_id", ondelete="SET NULL"), nullable=True)
     fecha = Column(Date, server_default=func.current_date())
     peso = Column(Numeric(5,2))
     estatura = Column(Numeric(5,2))

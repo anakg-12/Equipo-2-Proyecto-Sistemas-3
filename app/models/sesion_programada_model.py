@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from app.bd.database import Base
+from app.constants import SessionState
 
 class  SesionProgramadaModel(Base):
     __tablename__ = "sesion_programada"
@@ -13,7 +14,7 @@ class  SesionProgramadaModel(Base):
     cupo_maximo = Column(Integer, nullable=False)
     ubicacion = Column(String(100))
     nombre = Column(String(100), nullable=True)
-    estado = Column(String(20), nullable=False, default="programada")
+    estado = Column(String(20), nullable=False, default=SessionState.programada.value)
 
     disciplina = relationship("DisciplinaModel", back_populates="sesiones")
     entrenador = relationship("EntrenadorModel", back_populates="sesiones")

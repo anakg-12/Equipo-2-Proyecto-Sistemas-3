@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from app.bd.database import Base
 
+
 class MembresiaClienteModel(Base):
     __tablename__ = "membresia_cliente"
 

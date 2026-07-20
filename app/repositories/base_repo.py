@@ -1,14 +1,16 @@
-from typing import Generic, TypeVar, Type, Optional, List, Dict, Any
+from typing import Generic, TypeVar, Type, Optional, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete, inspect
+from sqlalchemy import select, update, delete
 from sqlalchemy.sql import func
+from app.core.errores import NotFoundException
 
 ModelType = TypeVar("ModelType")
 
+
 class BaseRepository(Generic[ModelType]):
-    
+
     # Repositorio con operaciones CRUD genericas
-    
+
     def __init__(self, model: Type[ModelType], db: AsyncSession):
         self.model = model
         self.db = db
@@ -26,6 +28,18 @@ class BaseRepository(Generic[ModelType]):
         stmt = select(self.model).where(getattr(self.model, id_column) == id)
         result = await self.db.execute(stmt)
         return result.scalar_one_or_none()
+    async def get_by_id_or_fail(self, id: int, id_column: str = "id", entity_name: str = "Entidad") -> ModelType:
+        """
+        Obtiene un registro por su ID. 
+        Si no existe, lanza automáticamente NotFoundException.
+        """
+        entity = await self.get_by_id(id, id_column)
+        if not entity:
+            raise NotFoundException(
+                detail=f"Id de {entity_name} no encontrado", 
+                error_code="ID_NOT_FOUND"
+            )
+        return entity
 
     async def get_all(self, skip: int = 0, limit: int = 100, **filters):
         stmt = select(self.model).offset(skip).limit(limit)
@@ -34,7 +48,9 @@ class BaseRepository(Generic[ModelType]):
         result = await self.db.execute(stmt)
         return result.scalars().all()
 
-    async def update(self, id: int, data: Dict[str, Any], id_column: str = "id") -> Optional[ModelType]:
+    async def update(
+        self, id: int, data: Dict[str, Any], id_column: str = "id"
+    ) -> Optional[ModelType]:
         """Actualiza un registro existente"""
         stmt = (
             update(self.model)
@@ -59,7 +75,9 @@ class BaseRepository(Generic[ModelType]):
         Asume que el modelo tiene una columna 'activo' (booleana)
         """
         if not hasattr(self.model, "activo"):
-            raise AttributeError(f"El modelo {self.model.__name__} no tiene columna 'activo'")
+            raise AttributeError(
+                f"El modelo {self.model.__name__} no tiene columna 'activo'"
+            )
         stmt = (
             update(self.model)
             .where(getattr(self.model, id_column) == id)
@@ -74,6 +92,6 @@ class BaseRepository(Generic[ModelType]):
         stmt = select(func.count()).select_from(self.model)
         if filters:
             stmt = stmt.filter_by(**filters)
-        
+
         result = await self.db.execute(stmt)
         return result.scalar() or 0

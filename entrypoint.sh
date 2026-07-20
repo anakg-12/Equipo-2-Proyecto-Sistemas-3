@@ -1,8 +1,8 @@
-#!/bin/bash
+﻿#!/bin/bash
 set -e
 
 echo "Esperando base de datos..."
-sleep 5
+
 
 echo "Inicializando base de datos y semillas..."
 python init_and_seed.py

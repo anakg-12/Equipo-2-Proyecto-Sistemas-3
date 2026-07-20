@@ -28,21 +28,9 @@ from app.routers import(
     venta_tienda_router,
     pago_factura_router
 )
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Creación de tablas de forma ASÍNCRONA 
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-        yield # Aquí la API atiende peticiones
-    
-    # Al cerrar: Limpieza obligatoria
-    await async_engine.dispose()    
-    
 
 app = FastAPI(title="SmartGym API", 
-              version="1.0.0", 
-              lifespan=lifespan
+              version="1.0.0"
               )
 
 # 1. Configuración de CORS (Para que el Frontend se pueda conectar)
@@ -76,5 +64,4 @@ app.include_router(reserva_inscripcion_router.router)
 app.include_router(sesion_programada_router.router)
 app.include_router(ticket_mantenimiento_router.router)
 app.include_router(usuario_router.router)
-#app.include_router(venta_detalle_router)
 app.include_router(venta_tienda_router.router)
