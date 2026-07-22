@@ -45,6 +45,18 @@ class SaleState(str, Enum):
     cancelada = "cancelada"
 
 
+class ProductCategory(str, Enum):
+    accesorios = "Accesorios"
+    suplementos = "Suplementos"
+    consumibles = "Consumibles"
+
+
+class PayMethod(str, Enum):
+    efectivo = "Efectivo"
+    transferencia = "Transferencia"
+    pago_movil = "Pago móvil"
+
+
 # Categorías de máquinas (human-friendly)
 MACHINE_CATEGORIES = [
     "Musculación",
