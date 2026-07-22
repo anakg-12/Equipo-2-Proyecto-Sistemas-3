@@ -18,7 +18,7 @@ from app.models import (
 )
 from app.core.security import hash_password
 from sqlalchemy import select
-from app.constants import MachineStatus, MembershipState, SessionState, ReservationState
+from app.constants import MachineStatus, MembershipState, SessionState, ReservationState, ProductCategory, PayMethod
 
 
 async def seed():
@@ -431,7 +431,7 @@ async def seed():
                             monto=plan.costo,
                             fecha_pago=fecha_inicio,
                             metodo_pago=(
-                                "Efectivo"
+                                PayMethod.efectivo.value
                                 if mem["cliente_username"] == "juan"
                                 else "Tarjeta"
                             ),
@@ -449,21 +449,21 @@ async def seed():
                 "descripcion": "Botella de acero inoxidable 750ml",
                 "precio": 8.0,
                 "stock": 50,
-                "categoria": "Accesorios",
+                "categoria": ProductCategory.accesorios.value,
             },
             {
                 "nombre": "Toalla de microfibra",
                 "descripcion": "Toalla absorbente",
                 "precio": 5.0,
                 "stock": 30,
-                "categoria": "Accesorios",
+                "categoria": ProductCategory.accesorios.value,
             },
             {
                 "nombre": "Proteína en polvo",
                 "descripcion": "2lb, sabor chocolate",
                 "precio": 35.0,
                 "stock": 20,
-                "categoria": "Suplementos",
+                "categoria": ProductCategory.suplementos.value,
             },
         ]
         for prod in productos_data:

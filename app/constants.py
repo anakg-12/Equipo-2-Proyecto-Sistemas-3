@@ -48,7 +48,6 @@ class SaleState(str, Enum):
 class ProductCategory(str, Enum):
     accesorios = "Accesorios"
     suplementos = "Suplementos"
-    consumibles = "Consumibles"
 
 
 class PayMethod(str, Enum):
