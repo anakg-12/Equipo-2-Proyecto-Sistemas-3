@@ -28,7 +28,7 @@ class ProductoTiendaFiltros:
         page: int = Query(1, ge=1, description="Número de página"),
         limit: int = Query(20, ge=1, le=100, description="Productos por página")
     ):
-        self.categoria = categoria.value
+        self.categoria = categoria.value if categoria else None
         self.stock_min = stock_min
         self.page = page
         self.limit = limit

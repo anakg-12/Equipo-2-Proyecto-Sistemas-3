@@ -53,7 +53,7 @@ class ProductCategory(str, Enum):
 class PayMethod(str, Enum):
     efectivo = "Efectivo"
     transferencia = "Transferencia"
-    pago_movil = "Pago móvil"
+    pago_movil = "Pago movil"
 
 
 # Categorías de máquinas (human-friendly)
