@@ -67,6 +67,7 @@ https://docs.docker.com/desktop/setup/install/windows-install/
 ```
 * **Configuración de líneas (Solo Windows):**
 > ⚠️ **Importante:** Antes de correr el contenedor, abre el archivo `entrypoint.sh` en VS Code. En la esquina inferior derecha de la barra de estado, haz clic donde dice **CRLF** y cámbialo a **LF** para evitar errores de ejecución en Linux.
+Asi como tambien asegurate que del lado izquierdo este en **UTF-8**
 
 * **Ejecutar:** Para levantar los contenedores del proyecto.
 ```bash
